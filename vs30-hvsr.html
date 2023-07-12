@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="vs30_hvsr/mapbox/mapbox-gl.css">
+        <link rel="stylesheet" href="vs30_hvsr/css/qgis2web.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Pantau Karakteristik Tanah - Peta</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS -->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <img src="https://www.bmkg.go.id/asset/img/logo/logo-bmkg.png" alt="Logo Website" id="logo" style="width:auto; max-height:30px; margin-right: 10px;">
+                <a class="navbar-brand" style="font-weight: 500;" href="index.html">PANTAU KARAKTERISTIK TANAH</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="index.html">Beranda</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="peta-dasar.html">Peta Dasar</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Peta</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="vs30-masw.html">Vs30 (MASW)</a></li>
+                                <li><a class="dropdown-item" href="vs30-hvsr.html">Vs30 (HVSR)</a></li>
+                                <li><a class="dropdown-item" href="kg.html">Kg</a></li>
+                                <li><a class="dropdown-item" href="a0.html">A0</a></li>
+                                <li><a class="dropdown-item" href="f0.html">F0</a></li>
+                                <li><a class="dropdown-item" href="tdom.html">Tdom</a></li>
+                                <li><a class="dropdown-item" href="#">PGA</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="informasi.html">Informasi</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div id="map">
+            <nav id="menu"></nav>
+              <div id="distance" class="distance-container"></div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <script src="vs30_hvsr/js/qgis2web_expressions.js"></script>
+        <script src="vs30_hvsr/mapbox/mapbox-gl.js"></script>
+        <script src="vs30_hvsr/data/overlayfix_1.js"></script>
+        <script src="vs30_hvsr/data/ADMINISTRASI_LN_25K_2.js"></script>
+        <script src="vs30_hvsr/mapbox/style.js"></script>
+        <script src="vs30_hvsr/js/Autolinker.min.js"></script>
+        <script>
+        var map = new mapboxgl.Map({
+        container: 'map',
+        style: styleJSON,
+        center: [112.73174241559569,-7.265107096822139],
+        zoom: 11,
+        bearing: 360.0,
+        attributionControl: false
+        });
+        map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+        map.addControl(new mapboxgl.AttributionControl({
+            compact: false
+        }));
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+
+        map.on('click', 'lyr_overlayfix_1_0', function (e) {
+            var description = '<table>\
+                            <tr>\
+                                <th scope="row">KELURAHAN</th>\
+                                <td>' + (e.features[0].properties['KELURAHAN'] !== null ? autolinker.link(e.features[0].properties['KELURAHAN'].toLocaleString()) : '') + '</td>\
+                            </tr>\
+                            <tr>\
+                                <th scope="row">KECAMATAN</th>\
+                                <td>' + (e.features[0].properties['KECAMATAN'] !== null ? autolinker.link(e.features[0].properties['KECAMATAN'].toLocaleString()) : '') + '</td>\
+                            </tr>\
+                            <tr>\
+                                <th scope="row">KOTA</th>\
+                                <td>' + (e.features[0].properties['KOTA'] !== null ? autolinker.link(e.features[0].properties['KOTA'].toLocaleString()) : '') + '</td>\
+                            </tr>\
+                            <tr>\
+                                <th scope="row">PROVINSI</th>\
+                                <td>' + (e.features[0].properties['PROVINSI'] !== null ? autolinker.link(e.features[0].properties['PROVINSI'].toLocaleString()) : '') + '</td>\
+                            </tr>\
+                            <tr>\
+                                <th scope="row">Vs30 (m/s)</th>\
+                                <td>' + (e.features[0].properties['DN'] !== null ? autolinker.link(e.features[0].properties['DN'].toLocaleString()) : '') + '</td>\
+                            </tr>\
+                        </table>'
+
+            new mapboxgl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'lyr_overlayfix_1_0', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'lyr_overlayfix_1_0', function () {
+            map.getCanvas().style.cursor = '';
+        });
+        </script>
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="legend">
+              <h5>Keterangan</h5>
+              <ul>
+                <li><span class="red"></span>Sangat Tinggi</li>
+                <li><span class="orange"></span>Tinggi</li>
+                <li><span class="yellow"></span>Sedang</li>
+                <li><span class="green"></span>Rendah</li>
+              </ul>
+            </div>
+        </div>
+  
+    </body>
+</html>
